@@ -188,11 +188,14 @@ private[ftp] trait FtpIOSinkStage[FtpClient, S <: RemoteFileSettings]
         matValuePromise.trySuccess(IOResult.createFailed(writtenBytesTotal, t))
 
       /** BLOCKING I/O WRITE */
-      private[this] def write(bytes: ByteString) =
+      private[this] def write(bytes: ByteString) = {
+        println("writing")
         osOpt.foreach { os =>
           os.write(bytes.toArray)
           writtenBytesTotal += bytes.size
         }
+        println("written")
+      }
 
     } // end of stage logic
 
