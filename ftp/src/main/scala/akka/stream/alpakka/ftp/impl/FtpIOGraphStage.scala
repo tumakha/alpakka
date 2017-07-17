@@ -150,6 +150,8 @@ private[ftp] trait FtpIOSinkStage[FtpClient, S <: RemoteFileSettings]
                 }
                 osOpt = None
                 throw e
+            } finally {
+              println("finally")
             }
             pull(in)
           }
