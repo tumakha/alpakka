@@ -178,17 +178,17 @@ class MqttSourceSpec
     "support will message" in {
       import system.dispatcher
 
-      val (binding, connection) = Tcp().bind("localhost", 1337).toMat(Sink.head)(Keep.both).run()
+      val (binding, connection) = Tcp().bind("127.0.0.1", 1337).toMat(Sink.head)(Keep.both).run()
 
       val ks = connection.map(
-        _.handleWith(Tcp().outgoingConnection("localhost", 1883).viaMat(KillSwitches.single)(Keep.right))
+        _.handleWith(Tcp().outgoingConnection("127.0.0.1", 1883).viaMat(KillSwitches.single)(Keep.right))
       )
 
       whenReady(binding) { _ =>
         val settings = MqttSourceSettings(
           sourceSettings
             .withClientId("source-spec/testator")
-            .withBroker("tcp://localhost:1337")
+            .withBroker("tcp://127.0.0.1:1337")
             .withWill(Will(MqttMessage(willTopic, ByteString("ohi")), MqttQoS.AtLeastOnce, retained = true)),
           Map(willTopic -> MqttQoS.AtLeastOnce)
         )
