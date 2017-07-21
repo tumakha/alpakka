@@ -95,7 +95,11 @@ private[ftp] trait SftpSource extends FtpSourceFactory[SSHClient] {
   protected final val sFtpBrowserSourceName = "sFtpBrowserSource"
   protected final val sFtpIOSourceName = "sFtpIOSource"
   protected final val sFtpIOSinkName = "sFtpIOSink"
-  protected val ftpClient: () => SSHClient = () => new SSHClient
+  protected val ftpClient: () => SSHClient = () => {
+    val client = new SSHClient
+    client.getTransport.setTimeoutMs(6000)
+    client
+  }
   protected val ftpBrowserSourceName: String = sFtpBrowserSourceName
   protected val ftpIOSourceName: String = sFtpIOSourceName
   protected val ftpIOSinkName: String = sFtpIOSinkName
