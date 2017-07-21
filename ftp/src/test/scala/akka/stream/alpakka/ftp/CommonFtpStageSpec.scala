@@ -258,10 +258,20 @@ trait CommonFtpStageSpec extends BaseSpec with Eventually {
       val future = infiniteSource.runWith(storeToPath(s"/$fileName", append = false))
       waitForUploadToStart(fileName)
       stopServer()
-      val result = future.futureValue
-      startServer()
 
-      result.status.failed.get shouldBe a[Exception]
+      try {
+        val result = future.futureValue
+        startServer()
+
+        result.status.failed.get shouldBe a[Exception]
+      } catch {
+        case e: Throwable =>
+          import scala.collection.JavaConverters._
+          Thread.getAllStackTraces.asScala.foreach {
+            case (t, v) => println(t.getName); v.foreach(e => println(" " + e)); println("")
+          }
+          throw e
+      }
     }
   }
 }
